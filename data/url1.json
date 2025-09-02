@@ -1,0 +1,3 @@
+{
+  "url": "https://utility.arcgis.com/usrsvcs/servers/0657741d9e4a4289912330077707ad39/rest/services/PublicMaps/Boundaries/MapServer/15/query?where=1=1&outFields=*&f=geojson"
+}

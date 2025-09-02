@@ -1,0 +1,40 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-117.1956, 34.0572]
+      },
+      "properties": { "name": "Esri HQ" }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [-118.2437, 34.0522],
+          [-118.1500, 34.0400],
+          [-118.0000, 34.0000]
+        ]
+      },
+      "properties": { "name": "Route Example" }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [-117.3, 34.05],
+            [-117.25, 34.10],
+            [-117.2, 34.05],
+            [-117.3, 34.05]
+          ]
+        ]
+      },
+      "properties": { "name": "Boundary Example" }
+    }
+  ]
+}

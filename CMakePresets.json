@@ -1,0 +1,43 @@
+{
+  "version": 3,
+  "cmakeMinimumRequired": {
+    "major": 3,
+    "minor": 21,
+    "patch": 0
+  },
+  "configurePresets": [
+    {
+      "name": "windows-ninja",
+      "displayName": "Windows Ninja",
+      "generator": "Ninja",
+      "binaryDir": "${sourceDir}/build-ninja",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug",
+        "CMAKE_TOOLCHAIN_FILE": "C:/xdev/vcpkg/scripts/buildsystems/vcpkg.cmake",
+        "VCPKG_TARGET_TRIPLET": "x64-mingw-dynamic"
+      }
+    }
+  ],
+  "buildPresets": [
+    {
+      "name": "windows-ninja-build",
+      "configurePreset": "windows-ninja"
+    },
+    {
+    "name": "windows-ninja-main-build",
+    "configurePreset": "windows-ninja",
+    "targets": ["geojson-spatial-analyzer"]
+    },  
+    {
+      "name": "windows-ninja-api-build",
+      "configurePreset": "windows-ninja",
+      "targets": ["geojson-spatial-analyzer-api"]
+    }
+  ],
+  "testPresets": [
+    {
+      "name": "windows-ninja-test",
+      "configurePreset": "windows-ninja"
+    }
+  ]
+}

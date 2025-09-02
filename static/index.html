@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>GeoJSON Spatial Analyzer</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+</head>
+<body class="bg-light">
+  <div class="container mt-4">
+    <h1 class="mb-4">GeoJSON Spatial Analyzer</h1>
+
+    <!-- URL Input -->
+    <div class="mb-3">
+      <label for="geojsonUrl" class="form-label">GeoJSON URL</label>
+      <input type="text" class="form-control" id="geojsonUrl" placeholder="https://example.com/data.geojson" />
+    </div>
+
+    <!-- File Upload -->
+    <div class="mb-3">
+      <label for="geojsonFile" class="form-label">Upload GeoJSON File</label>
+      <input type="file" class="form-control" id="geojsonFile" accept=".json,.geojson" />
+    </div>
+
+    <!-- Analyze and Clear Buttons -->
+    <div class="mb-3">
+      <button id="analyzeBtn" class="btn btn-primary">Analyze Bounding Box</button>
+      <button id="clearBtn" class="btn btn-secondary ms-2">Clear</button>
+      <button id="cancelBtn" class="btn btn-danger ms-2">Cancel</button>
+    </div>
+
+    <!-- Loading Spinner -->
+    <div id="loadingSpinner" class="text-center" style="display: none;">
+      <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+      <div>Analyzing...</div>
+    </div>
+
+    <!-- Notification Div -->
+    <div id="notification" class="alert alert-info text-center" style="display: none;"></div>
+
+    <!-- Results Table -->
+    <div class="mt-4">
+      <h4>Bounding Box Results</h4>
+      <table class="table table-bordered mt-2" id="resultsTable" style="display: none;">
+        <thead>
+          <tr>
+            <th>Min Longitude</th>
+            <th>Max Longitude</th>
+            <th>Min Latitude</th>
+            <th>Max Latitude</th>
+          </tr>
+        </thead>
+        <tbody id="resultsBody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <script>
+    let controller = null;
+
+    function showNotification(message, type = "info") {
+      const notification = document.getElementById("notification");
+      notification.textContent = message;
+      notification.className = `alert alert-${type} text-center`;
+      notification.style.display = "block";
+    }
+
+    function hideNotification() {
+      document.getElementById("notification").style.display = "none";
+    }
+
+    document.getElementById("analyzeBtn").addEventListener("click", async () => {
+      hideNotification();
+      const url = document.getElementById("geojsonUrl").value;
+      const file = document.getElementById("geojsonFile").files[0];
+      let geojsonData = {};
+
+      // Show loading spinner
+      document.getElementById("loadingSpinner").style.display = "block";
+      document.getElementById("resultsTable").style.display = "none";
+
+      // Create a new AbortController for each request
+      controller = new AbortController();
+      const signal = controller.signal;
+
+      if (url) {
+        geojsonData = { url: url };
+      } else if (file) {
+        const text = await file.text();
+        geojsonData = JSON.parse(text);
+      } else {
+        showNotification("Please provide a URL or upload a GeoJSON file.", "warning");
+        document.getElementById("loadingSpinner").style.display = "none";
+        return;
+      }
+
+      try {
+        const res = await fetch("/bounding-box", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(geojsonData),
+          signal: signal
+        });
+
+        document.getElementById("loadingSpinner").style.display = "none";
+
+        if (!res.ok) {
+          showNotification("Failed to analyze bounding box.", "danger");
+          return;
+        }
+
+        const bbox = await res.json();
+        const table = document.getElementById("resultsTable");
+        const body = document.getElementById("resultsBody");
+        body.innerHTML = `
+          <tr>
+            <td>${bbox.minLon}</td>
+            <td>${bbox.maxLon}</td>
+            <td>${bbox.minLat}</td>
+            <td>${bbox.maxLat}</td>
+          </tr>`;
+        table.style.display = "table";
+      } catch (err) {
+        document.getElementById("loadingSpinner").style.display = "none";
+        if (err.name === "AbortError") {
+          showNotification("Analysis canceled.", "warning");
+        } else {
+          showNotification("An error occurred: " + err.message, "danger");
+        }
+      }
+    });
+
+    document.getElementById("cancelBtn").addEventListener("click", () => {
+      if (controller) {
+        controller.abort();
+      }
+      document.getElementById("loadingSpinner").style.display = "none";
+    });
+
+    document.getElementById("clearBtn").addEventListener("click", () => {
+      document.getElementById("geojsonUrl").value = "";
+      document.getElementById("geojsonFile").value = "";
+      document.getElementById("resultsBody").innerHTML = "";
+      document.getElementById("resultsTable").style.display = "none";
+      hideNotification();
+    });
+  </script>
+</body>
+</html>
