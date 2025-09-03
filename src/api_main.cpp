@@ -68,6 +68,23 @@ int main() {
         return res;
     });
     
+    // Route for serving static files (e.g., CSS)
+    CROW_ROUTE(app, "/<string>")
+    ([](const crow::request& req, std::string filename){
+        std::ifstream file("../static/" + filename, std::ios::binary);
+        if (!file.is_open()) {
+            return crow::response(404);
+        }
+        std::string content((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
+        // Set content type for CSS
+        if (filename.find(".css") != std::string::npos) {
+            crow::response res(200, content);
+            res.set_header("Content-Type", "text/css");
+            return res;
+        }
+        return crow::response(content);
+    });
+
     // Start the server on port 8080, multithreaded
     app.port(8080).multithreaded().run();
 }
