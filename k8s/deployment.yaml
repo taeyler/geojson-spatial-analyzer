@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: geojson-analyzer
+  labels:
+    app: geojson-analyzer
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: geojson-analyzer
+  template:
+    metadata:
+      labels:
+        app: geojson-analyzer
+    spec:
+      containers:
+        - name: geojson-analyzer
+          image: geojson-analyzer:latest
+          imagePullPolicy: Never   # Important: tells K8s to use the local image, not pull from internet
+          ports:
+            - containerPort: 8080
+          resources:
+            requests:
+              memory: "64Mi"
+              cpu: "100m"
+            limits:
+              memory: "256Mi"
+              cpu: "500m"
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8080
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            failureThreshold: 3
