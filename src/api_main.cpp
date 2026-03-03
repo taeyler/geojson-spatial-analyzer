@@ -68,6 +68,15 @@ int main() {
         return res;
     });
     
+    // Health check endpoint — Kubernetes will ping this to know the app is alive
+    CROW_ROUTE(app, "/health")
+    ([]() {
+        crow::json::wvalue response;
+        response["status"] = "ok";
+        response["service"] = "geojson-spatial-analyzer";
+        return crow::response(200, response);
+    });
+
     // Route for serving static files (e.g., CSS)
     CROW_ROUTE(app, "/<string>")
     ([](const crow::request& req, std::string filename){
