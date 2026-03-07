@@ -14,7 +14,10 @@
       "cacheVariables": {
         "CMAKE_BUILD_TYPE": "Debug",
         "CMAKE_TOOLCHAIN_FILE": "C:/xdev/vcpkg/scripts/buildsystems/vcpkg.cmake",
-        "VCPKG_TARGET_TRIPLET": "x64-mingw-dynamic"
+        "VCPKG_TARGET_TRIPLET": "x64-mingw-dynamic",
+        "CMAKE_C_COMPILER": "C:/msys64/ucrt64/bin/gcc.exe",
+        "CMAKE_CXX_COMPILER": "C:/msys64/ucrt64/bin/g++.exe",
+        "CMAKE_MAKE_PROGRAM": "C:/msys64/ucrt64/bin/ninja.exe"
       }
     }
   ],
@@ -24,9 +27,9 @@
       "configurePreset": "windows-ninja"
     },
     {
-    "name": "windows-ninja-main-build",
-    "configurePreset": "windows-ninja",
-    "targets": ["geojson-spatial-analyzer"]
+      "name": "windows-ninja-main-build",
+      "configurePreset": "windows-ninja",
+      "targets": ["geojson-spatial-analyzer"]
     },  
     {
       "name": "windows-ninja-api-build",

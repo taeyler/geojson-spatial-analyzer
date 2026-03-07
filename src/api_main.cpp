@@ -2,7 +2,6 @@
 #include "../include/json.hpp"
 #include "../include/bbox_utils.hpp"
 #include <cpr/cpr.h>
-
 using json = nlohmann::json;
 
 //Sample curl command for file:
@@ -15,9 +14,11 @@ using json = nlohmann::json;
 int main() {
     crow::SimpleApp app;
 
+    std::string staticPath = "./static/";
+
     // Serve the UI
-    CROW_ROUTE(app, "/")([](){
-        std::ifstream file("../static/index.html");
+    CROW_ROUTE(app, "/")([staticPath](){
+        std::ifstream file(staticPath + "index.html");
         if (!file.is_open()) {
             return crow::response(500, "UI not found");
         }
@@ -79,8 +80,8 @@ int main() {
 
     // Route for serving static files (e.g., CSS)
     CROW_ROUTE(app, "/<string>")
-    ([](const crow::request& req, std::string filename){
-        std::ifstream file("../static/" + filename, std::ios::binary);
+    ([staticPath](const crow::request& req, std::string filename){
+        std::ifstream file(staticPath + filename, std::ios::binary);
         if (!file.is_open()) {
             return crow::response(404);
         }

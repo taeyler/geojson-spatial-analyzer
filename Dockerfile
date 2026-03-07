@@ -45,6 +45,8 @@ COPY --from=builder /app/build/geojson-spatial-analyzer-api .
 
 COPY --from=builder /app/data ./data
 
+COPY --from=builder /app/static ./static
+
 EXPOSE 8080
 
 CMD ["./geojson-spatial-analyzer-api"]
