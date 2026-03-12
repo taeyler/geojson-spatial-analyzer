@@ -77,7 +77,7 @@ int main(int argc, char* argv[]) {
             string filename;
             ifstream file;
             for (const auto& ext : extensions) {
-                filename = "../data/" + userInput;
+                filename = "./data/" + userInput;
                 // Add extension if not already present
                 if (filename.size() < ext.size() || filename.substr(filename.size() - ext.size()) != ext) {
                     filename += ext;
