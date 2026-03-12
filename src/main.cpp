@@ -45,7 +45,7 @@ int main(int argc, char* argv[]) {
         } 
         // Check if input is a URL reference file
         else if (ifstream("./data/" + userInput + ".json").is_open()) {
-            string refFilename = "../data/" + userInput + ".json";
+            string refFilename = "./data/" + userInput + ".json";
             ifstream refFile(refFilename);
             json file_json;
             try {
